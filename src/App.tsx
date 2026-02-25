@@ -28,12 +28,12 @@ export default function App() {
 
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard role={role} />;
+        return <Dashboard role={role as any} />;
       case 'courses':
         return <Courses onSelectCourse={(id) => setSelectedCourseId(id)} />;
       case 'students':
       case 'instructors':
-        return <Management role={role} />;
+        return <Management role={role as any} />;
       case 'analytics':
         return <Analytics />;
       case 'messages':
@@ -46,7 +46,7 @@ export default function App() {
         return (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
              <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center">
-                <span className="text-3xl">🏗️</span>
+                <span className="text-3xl">\ud83c\udfd7\ufe0f</span>
              </div>
              <div>
                <h2 className="text-2xl font-bold text-gray-900">Feature Under Development</h2>
@@ -79,8 +79,8 @@ export default function App() {
           setActiveTab(tab);
           setSelectedCourseId(null);
         }} 
-        role={role}
-        setRole={handleRoleChange}
+        role={role as any}
+        setRole={handleRoleChange as any}
       >
         {renderContent()}
       </Layout>

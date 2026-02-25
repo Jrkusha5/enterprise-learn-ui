@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, LayoutGrid, List, Star, Users, ArrowRight } from 'lucide-react';
+import { Search, LayoutGrid, List, Star, Users } from 'lucide-react';
 import { MOCK_COURSES } from '../data/mock';
 import { cn } from '../utils/cn';
 import { Course } from '../types';
@@ -23,9 +23,9 @@ const Courses: React.FC<{ onSelectCourse: (c: Course) => void }> = ({ onSelectCo
             <img src={course.thumbnail} className="w-full h-40 object-cover" />
             <div className="p-5">
               <h3 className="font-bold text-slate-900">{course.title}</h3>
-              <p className="text-sm text-slate-500 mt-1">by {course.instructor}</p>
+              <p className="text-sm text-slate-500 mt-1">by {course.instructorName}</p>
               <div className="flex items-center gap-4 mt-4 text-xs font-bold text-slate-400 uppercase">
-                <span className="flex items-center gap-1"><Users size={14}/> {course.students}</span>
+                <span className="flex items-center gap-1"><Users size={14}/> {course.studentsCount}</span>
                 <span className="flex items-center gap-1 text-amber-500"><Star size={14} fill="currentColor"/> {course.rating}</span>
               </div>
             </div>

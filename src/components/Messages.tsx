@@ -82,7 +82,7 @@ const Messages: React.FC = () => {
                     ? "bg-indigo-600 text-white rounded-br-none" 
                     : "bg-white text-slate-700 border border-slate-100 rounded-bl-none"
                 )}>
-                  {msg.text}
+                  {msg.content}
                 </div>
                 <p className={cn("text-[10px] mt-1.5 font-bold text-slate-400", msg.isMe ? "text-right" : "")}>{msg.timestamp}</p>
               </div>

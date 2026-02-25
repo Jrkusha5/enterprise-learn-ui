@@ -31,12 +31,37 @@ export const courses: Course[] = [
     studentsCount: 1240,
     duration: '24h 15m',
     progress: 45,
+    price: 89.99,
     description: 'Master the latest features of React 19, including Server Components, Actions, and enhanced hooks.',
     lessons: [
-      { id: 'l-1', title: 'Introduction to React 19', duration: '10:00', completed: true },
-      { id: 'l-2', title: 'New Hook: useActionState', duration: '15:30', completed: true },
-      { id: 'l-3', title: 'Server Components Explained', duration: '20:00', completed: false },
-      { id: 'l-4', title: 'Optimizing Performance', duration: '12:45', completed: false },
+      { 
+        id: 'l-1', 
+        title: 'Introduction to React 19', 
+        duration: '10:00', 
+        completed: true,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+      },
+      { 
+        id: 'l-2', 
+        title: 'New Hook: useActionState', 
+        duration: '15:30', 
+        completed: true,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
+      },
+      { 
+        id: 'l-3', 
+        title: 'Server Components Explained', 
+        duration: '20:00', 
+        completed: false,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+      },
+      { 
+        id: 'l-4', 
+        title: 'Optimizing Performance', 
+        duration: '12:45', 
+        completed: false,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
+      },
     ]
   },
   {
@@ -50,10 +75,23 @@ export const courses: Course[] = [
     studentsCount: 850,
     duration: '45h 30m',
     progress: 10,
+    price: 129.99,
     description: 'A comprehensive guide to Python for Data Science, statistics, and machine learning algorithms.',
     lessons: [
-      { id: 'l-5', title: 'Python Basics for Data Science', duration: '45:00', completed: true },
-      { id: 'l-6', title: 'NumPy and Pandas Deep Dive', duration: '60:00', completed: false },
+      { 
+        id: 'l-5', 
+        title: 'Python Basics for Data Science', 
+        duration: '45:00', 
+        completed: true,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
+      },
+      { 
+        id: 'l-6', 
+        title: 'NumPy and Pandas Deep Dive', 
+        duration: '60:00', 
+        completed: false,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
+      },
     ]
   },
   {
@@ -67,10 +105,23 @@ export const courses: Course[] = [
     studentsCount: 3200,
     duration: '18h 20m',
     progress: 0,
+    price: 79.99,
     description: 'Learn professional UI/UX design from scratch using Figma, Framer, and modern design principles.',
     lessons: [
-      { id: 'l-7', title: 'Design Thinking Principles', duration: '15:00', completed: false },
-      { id: 'l-8', title: 'Mastering Figma Components', duration: '35:00', completed: false },
+      { 
+        id: 'l-7', 
+        title: 'Design Thinking Principles', 
+        duration: '15:00', 
+        completed: false,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
+      },
+      { 
+        id: 'l-8', 
+        title: 'Mastering Figma Components', 
+        duration: '35:00', 
+        completed: false,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+      },
     ]
   },
   {
@@ -84,10 +135,23 @@ export const courses: Course[] = [
     studentsCount: 540,
     duration: '12h 45m',
     progress: 75,
+    price: 149.99,
     description: 'Learn how to lead teams, manage budgets, and execute business strategies effectively.',
     lessons: [
-      { id: 'l-9', title: 'Leadership Styles', duration: '20:00', completed: true },
-      { id: 'l-10', title: 'Financial Planning', duration: '40:00', completed: true },
+      { 
+        id: 'l-9', 
+        title: 'Leadership Styles', 
+        duration: '20:00', 
+        completed: true,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackAds.mp4'
+      },
+      { 
+        id: 'l-10', 
+        title: 'Financial Planning', 
+        duration: '40:00', 
+        completed: true,
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+      },
     ]
   }
 ];

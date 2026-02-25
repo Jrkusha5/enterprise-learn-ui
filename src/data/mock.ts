@@ -1,6 +1,6 @@
 import { Role, Course, Message, Activity, User } from '../types';
 
-export const MOCK_USER: { [key in Role]: any } = {
+export const MOCK_USER: { [key in 'ADMIN' | 'INSTRUCTOR' | 'STUDENT']: User } = {
   ADMIN: {
     id: '1',
     name: 'Sarah Connor',
@@ -58,30 +58,32 @@ export const MOCK_COURSES: Course[] = [
   {
     id: '1',
     title: 'Mastering React 19 & Next.js 15',
-    instructor: 'John Doe',
+    instructorName: 'John Doe',
     thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/course-thumbnail-1-010651c5-1772004211513.webp',
     progress: 45,
     category: 'Development',
-    students: 1240,
+    studentsCount: 1240,
     rating: 4.8,
     price: 89.99,
+    duration: '24h 15m',
     description: 'Learn the latest features of React 19 including Server Components, Actions, and more.',
     lessons: [
-      { id: 'l1', title: 'Introduction to React 19', duration: '10:00', completed: true, videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', content: 'Welcome to the course!' },
-      { id: 'l2', title: 'Understanding Server Components', duration: '15:30', completed: true, videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', content: 'Deep dive into RSCs.' },
-      { id: 'l3', title: 'Client Actions & Forms', duration: '22:15', completed: false, videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', content: 'Managing state with actions.' },
+      { id: 'l1', title: 'Introduction to React 19', duration: '10:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', content: 'Welcome to the course!' },
+      { id: 'l2', title: 'Understanding Server Components', duration: '15:30', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', content: 'Deep dive into RSCs.' },
+      { id: 'l3', title: 'Client Actions & Forms', duration: '22:15', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', content: 'Managing state with actions.' },
     ]
   },
   {
     id: '2',
     title: 'Data Science with Python',
-    instructor: 'Sarah Smith',
+    instructorName: 'Sarah Smith',
     thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/course-thumbnail-2-45fb37a8-1772004209540.webp',
     progress: 12,
     category: 'Data Science',
-    students: 850,
+    studentsCount: 850,
     rating: 4.9,
     price: 99.99,
+    duration: '35h 20m',
     description: 'Comprehensive guide to data analysis, visualization, and machine learning.',
     lessons: [
       { id: 'l4', title: 'Pandas Fundamentals', duration: '12:00', completed: true, videoUrl: '', content: '' },
@@ -91,35 +93,37 @@ export const MOCK_COURSES: Course[] = [
   {
     id: '3',
     title: 'UI/UX Design Masterclass',
-    instructor: 'Emma Wilson',
+    instructorName: 'Emma Wilson',
     thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/course-thumbnail-3-7ee80af6-1772004210672.webp',
     progress: 0,
     category: 'Design',
-    students: 2100,
+    studentsCount: 2100,
     rating: 4.7,
     price: 75.00,
+    duration: '18h 45m',
     description: 'Learn Figma, design systems, and user testing from industry experts.',
     lessons: []
   },
   {
     id: '4',
     title: 'Business Strategy & Growth',
-    instructor: 'Marcus Aurelius',
+    instructorName: 'Marcus Aurelius',
     thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/course-thumbnail-4-177cf377-1772004211417.webp',
     progress: 80,
     category: 'Business',
-    students: 540,
+    studentsCount: 540,
     rating: 4.6,
     price: 120.00,
+    duration: '12h 10m',
     description: 'Scaling your startup to the next level with proven frameworks.',
     lessons: []
   }
 ];
 
 export const MOCK_MESSAGES: Message[] = [
-  { id: '1', senderId: '2', senderName: 'Dr. Alan Grant', senderAvatar: MOCK_USER.INSTRUCTOR.avatar, text: 'Hello! How is your progress on the React course?', timestamp: '10:30 AM', isMe: false },
-  { id: '2', senderId: '3', senderName: 'Alex Rivera', senderAvatar: MOCK_USER.STUDENT.avatar, text: 'Hi Professor! It is going great. I just finished the RSC section.', timestamp: '10:35 AM', isMe: true },
-  { id: '3', senderId: '2', senderName: 'Dr. Alan Grant', senderAvatar: MOCK_USER.INSTRUCTOR.avatar, text: 'Excellent. Make sure to try the assignment.', timestamp: '10:40 AM', isMe: false },
+  { id: '1', senderId: '2', receiverId: '3', senderName: 'Dr. Alan Grant', senderAvatar: MOCK_USER.INSTRUCTOR.avatar, content: 'Hello! How is your progress on the React course?', timestamp: '10:30 AM', isMe: false, isRead: true },
+  { id: '2', senderId: '3', receiverId: '2', senderName: 'Alex Rivera', senderAvatar: MOCK_USER.STUDENT.avatar, content: 'Hi Professor! It is going great. I just finished the RSC section.', timestamp: '10:35 AM', isMe: true, isRead: true },
+  { id: '3', senderId: '2', receiverId: '3', senderName: 'Dr. Alan Grant', senderAvatar: MOCK_USER.INSTRUCTOR.avatar, content: 'Excellent. Make sure to try the assignment.', timestamp: '10:40 AM', isMe: false, isRead: true },
 ];
 
 export const MOCK_ACTIVITIES: Activity[] = [
