@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useAuth } from '../../contexts/AuthContext';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -36,6 +38,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'instructor', 'student'] },
@@ -95,7 +104,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
              <ShieldCheck className="w-5 h-5 shrink-0" />
              {isSidebarOpen && <span>Switch Role: {role}</span>}
            </button>
-           <button className="w-full flex items-center gap-4 px-3 py-3 rounded-lg text-red-400 hover:bg-red-500/10 mt-2">
+           <button 
+             onClick={handleLogout}
+             className="w-full flex items-center gap-4 px-3 py-3 rounded-lg text-red-400 hover:bg-red-500/10 mt-2"
+           >
             <LogOut className="w-6 h-6 shrink-0" />
             {isSidebarOpen && <span className="font-medium">Logout</span>}
           </button>
@@ -166,12 +178,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
                 className="flex items-center gap-2 p-1 pr-3 hover:bg-gray-50 rounded-full transition-colors"
               >
                 <img 
-                  src="https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/student-profile-1-e114f209-1772004547190.webp" 
+                  src={user?.avatar || "https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/student-profile-1-e114f209-1772004547190.webp"} 
                   alt="Profile" 
                   className="w-8 h-8 rounded-full object-cover border border-gray-200"
                 />
                 <div className="text-left hidden md:block">
-                  <p className="text-sm font-semibold text-gray-800 leading-none">Alex Johnson</p>
+                  <p className="text-sm font-semibold text-gray-800 leading-none">{user?.name || 'User'}</p>
                   <p className="text-[10px] text-gray-500 capitalize">{role}</p>
                 </div>
                 <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -181,7 +193,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
                   <div className="px-4 py-3 border-b border-gray-50">
                     <p className="text-xs text-gray-500">Signed in as</p>
-                    <p className="text-sm font-semibold truncate">alex.j@example.com</p>
+                    <p className="text-sm font-semibold truncate">{user?.email || 'user@example.com'}</p>
                   </div>
                   <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 transition-colors">
                     <UserIcon className="w-4 h-4" /> My Profile
@@ -190,7 +202,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
                     <Settings className="w-4 h-4" /> Settings
                   </button>
                   <div className="h-px bg-gray-50 my-1"></div>
-                  <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
                     <LogOut className="w-4 h-4" /> Logout
                   </button>
                 </div>

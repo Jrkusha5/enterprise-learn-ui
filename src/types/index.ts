@@ -9,20 +9,49 @@ export interface User {
   bio?: string;
 }
 
+export interface Chapter {
+  id: string;
+  title: string;
+  lessons: Lesson[];
+}
+
 export interface Course {
   id: string;
   title: string;
   instructorId?: string;
   instructorName: string;
+  instructorAvatar?: string;
+  instructorBio?: string;
   thumbnail: string;
   category: string;
   rating: number;
   studentsCount: number;
   duration: string;
   lessons: Lesson[];
+  chapters?: Chapter[];
   progress?: number;
   description: string;
   price?: number;
+  learningOutcomes?: string[];
+  videoLessonsCount?: number;
+  includes?: {
+    videoLessons?: number;
+    hoursOfContent?: string;
+    certificate?: boolean;
+    downloadableResources?: boolean;
+    quizzes?: boolean;
+  };
+  reviews?: Review[];
+}
+
+export interface Review {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  comment: string;
+  date: string;
 }
 
 export interface Lesson {
