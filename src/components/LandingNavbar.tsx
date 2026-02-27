@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Menu, X } from 'lucide-react';
+import { GoogleTranslateSelector } from './GoogleTranslateSelector';
 
 export const LandingNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,6 +47,7 @@ export const LandingNavbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
+            <GoogleTranslateSelector className="text-gray-300" />
             <button
               onClick={() => scrollToSection('about')}
               className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
@@ -120,6 +122,9 @@ export const LandingNavbar: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-gray-900/98 backdrop-blur-md border-t border-gray-800">
           <div className="px-4 pt-2 pb-4 space-y-2">
+            <div className="px-4 py-2">
+              <GoogleTranslateSelector className="text-gray-300" />
+            </div>
             <button
               onClick={() => scrollToSection('about')}
               className="block w-full text-left px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"

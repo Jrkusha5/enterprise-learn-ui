@@ -210,6 +210,15 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+/* Google Translate - hide default banner */
+.goog-te-banner-frame,
+.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

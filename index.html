@@ -43,8 +43,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <title>Zappa LMS</title>
+
+    <!-- Google Translate - loads early so cookie is read on page load -->
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: 'en', includedLanguages: 'en,am', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false },
+          'google_translate_element'
+        );
+      }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </head>
   <body>
+    <!-- Hidden container for Google Translate (required for translation to work) -->
+    <div id="google_translate_element" style="position:absolute;left:-9999px;top:0;"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

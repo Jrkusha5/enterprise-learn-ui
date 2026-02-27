@@ -21,6 +21,7 @@ import {
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAuth } from '../../contexts/AuthContext';
+import { GoogleTranslateSelector } from '../GoogleTranslateSelector';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -139,6 +140,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
           </div>
 
           <div className="flex items-center gap-4">
+            <GoogleTranslateSelector className="text-gray-600" variant="light" />
             <div className="relative">
                <button 
                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
