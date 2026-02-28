@@ -7,6 +7,7 @@ interface CoursesContextType {
   addCourse: (course: Omit<Course, 'id'> & { id?: string }) => void;
   updateCourse: (id: string, updates: Partial<Course>) => void;
   deleteCourse: (id: string) => void;
+  isCustomCourse: (id: string) => boolean;
 }
 
 const CoursesContext = createContext<CoursesContextType | undefined>(undefined);
@@ -69,9 +70,11 @@ export const CoursesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   };
 
+  const isCustomCourse = (id: string) => customCourses.some(c => c.id === id);
+
   const value = useMemo(
-    () => ({ courses, addCourse, updateCourse, deleteCourse }),
-    [courses]
+    () => ({ courses, addCourse, updateCourse, deleteCourse, isCustomCourse }),
+    [courses, customCourses]
   );
 
   return <CoursesContext.Provider value={value}>{children}</CoursesContext.Provider>;

@@ -12,42 +12,27 @@ import {
   CheckCircle2, 
   ArrowLeft,
   Share2,
-  BookOpen,
   Award,
   Download,
   FileText,
-  User,
   Calendar,
-  Pencil,
-  X,
-  Trash2
+  Pencil
 } from 'lucide-react';
 import { instructors } from '../data/mockData';
-import { Course } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useCourses } from '../contexts/CoursesContext';
 import { toast } from 'sonner';
-
-const CATEGORIES_EDIT = ['Development', 'Design', 'Data Science', 'Business', 'Marketing'];
-
-function isCustomCourse(c: Course) {
-  return c.id.startsWith('custom-');
-}
 
 export const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
-  const { courses, updateCourse, deleteCourse } = useCourses();
+  const { courses, isCustomCourse } = useCourses();
   const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'reviews' | 'instructor'>('overview');
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editTitle, setEditTitle] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [editCategory, setEditCategory] = useState('');
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const canEdit = (user?.role === 'admin' || user?.role === 'instructor') && id && isCustomCourse(id);
 
   const course = courses.find(c => c.id === id);
-  const canEditCourse = course && isCustomCourse(course) && (user?.role === 'admin' || user?.role === 'instructor');
   const instructor = course?.instructorId 
     ? instructors.find(i => i.id === course.instructorId) 
     : null;
@@ -107,38 +92,6 @@ export const CourseDetail: React.FC = () => {
     navigate(`/dashboard`);
   };
 
-  const openEditModal = () => {
-    if (!course) return;
-    setEditTitle(course.title);
-    setEditDescription(course.description ?? '');
-    setEditCategory(course.category ?? 'Development');
-    setShowDeleteConfirm(false);
-    setShowEditModal(true);
-  };
-
-  const handleSaveEdit = () => {
-    if (!course || !editTitle.trim()) {
-      toast.error('Please enter a course title');
-      return;
-    }
-    updateCourse(course.id, {
-      title: editTitle.trim(),
-      description: editDescription.trim() || course.description,
-      category: editCategory,
-    });
-    toast.success('Course updated');
-    setShowEditModal(false);
-  };
-
-  const handleDeleteFromDetail = () => {
-    if (!course) return;
-    deleteCourse(course.id);
-    toast.success('Course deleted');
-    setShowEditModal(false);
-    setShowDeleteConfirm(false);
-    navigate('/courses');
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-900 text-white">
       <LandingNavbar />
@@ -191,86 +144,8 @@ export const CourseDetail: React.FC = () => {
                   <Play className="w-5 h-5" />
                   <span>{totalLessons} video lessons</span>
                 </div>
-                {canEditCourse && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={openEditModal}
-                    className="ml-auto border-white/30 text-white hover:bg-white/10"
-                  >
-                    <Pencil className="w-4 h-4 mr-2" />
-                    Edit course
-                  </Button>
-                )}
               </div>
             </div>
-
-            {showEditModal && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setShowEditModal(false)}>
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700" onClick={e => e.stopPropagation()}>
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Edit Course</h2>
-                    <button onClick={() => setShowEditModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300">
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
-                      <input
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                        className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                      <textarea
-                        value={editDescription}
-                        onChange={(e) => setEditDescription(e.target.value)}
-                        rows={3}
-                        className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 resize-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
-                      <select
-                        value={editCategory}
-                        onChange={(e) => setEditCategory(e.target.value)}
-                        className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500"
-                      >
-                        {CATEGORIES_EDIT.map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-3 mt-6">
-                    <div className="flex gap-3">
-                      <button onClick={handleSaveEdit} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700">
-                        Save changes
-                      </button>
-                      <button onClick={() => setShowEditModal(false)} className="px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl font-medium text-gray-700 dark:text-gray-300">
-                        Cancel
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => setShowDeleteConfirm(true)}
-                      className="w-full py-2.5 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-xl font-medium hover:bg-red-50 dark:hover:bg-red-900/20"
-                    >
-                      Delete course
-                    </button>
-                    {showDeleteConfirm && (
-                      <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
-                        <span className="text-sm text-red-800 dark:text-red-200 flex-1">Delete this course? This cannot be undone.</span>
-                        <button onClick={handleDeleteFromDetail} className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium">Yes, delete</button>
-                        <button onClick={() => setShowDeleteConfirm(false)} className="px-3 py-1.5 border border-red-300 dark:border-red-700 rounded-lg text-sm font-medium text-red-700 dark:text-red-300">Cancel</button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Course Preview Video */}
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-800">
@@ -466,6 +341,17 @@ export const CourseDetail: React.FC = () => {
                 >
                   Enroll Now
                 </Button>
+
+                {canEdit && (
+                  <Button
+                    variant="outline"
+                    className="w-full border-gray-700 text-white hover:bg-white/10 mb-4"
+                    onClick={() => navigate(`/dashboard?edit=${id}`)}
+                  >
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Edit Course
+                  </Button>
+                )}
 
                 <Button
                   variant="outline"

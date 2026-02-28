@@ -1,53 +1,58 @@
 import React from 'react';
-import { Star, Users, Clock, PlayCircle, Pencil, Trash2 } from 'lucide-react';
+import { Star, Clock, PlayCircle, Eye, Pencil } from 'lucide-react';
 import { Course } from '../../types';
 
 interface CourseCardProps {
   course: Course;
   onClick?: () => void;
-  onEdit?: (e: React.MouseEvent) => void;
-  onDelete?: (e: React.MouseEvent) => void;
-  isCustomCourse?: boolean;
+  onViewDetail?: (courseId: string) => void;
+  onEdit?: (courseId: string) => void;
+  canEdit?: boolean;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onEdit, onDelete, isCustomCourse }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onViewDetail, onEdit, canEdit }) => {
+  const handleCardClick = () => onClick?.();
+
+  const handleAction = (e: React.MouseEvent, fn?: (id: string) => void) => {
+    e.stopPropagation();
+    fn?.(course.id);
+  };
+
   return (
-    <div
-      onClick={onClick}
-      className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer relative"
+    <div 
+      onClick={handleCardClick}
+      className="bg-white rounded-2xl border border-gray-200 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer"
     >
       <div className="relative aspect-video overflow-hidden">
-        <img
-          src={course.thumbnail}
-          alt={course.title}
+        <img 
+          src={course.thumbnail} 
+          alt={course.title} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {isCustomCourse && (onEdit || onDelete) && (
-          <div className="absolute top-3 right-3 flex gap-2" onClick={e => e.stopPropagation()}>
-            {onEdit && (
-              <button
-                onClick={onEdit}
-                className="p-2 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow hover:bg-white dark:hover:bg-gray-700"
-                aria-label="Edit course"
-              >
-                <Pencil className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              </button>
-            )}
-            {onDelete && (
-              <button
-                onClick={onDelete}
-                className="p-2 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow hover:bg-red-50 dark:hover:bg-red-900/30"
-                aria-label="Delete course"
-              >
-                <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
-              </button>
-            )}
-          </div>
-        )}
         <div className="absolute top-3 left-3">
           <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-indigo-600 shadow-sm">
             {course.category}
           </span>
+        </div>
+        <div className="absolute top-3 right-3 flex items-center gap-1">
+          {onViewDetail && (
+            <button
+              onClick={(e) => handleAction(e, onViewDetail)}
+              className="p-2 bg-white/90 hover:bg-white rounded-lg shadow-sm transition-colors"
+              title="View details"
+            >
+              <Eye className="w-4 h-4 text-gray-700" />
+            </button>
+          )}
+          {canEdit && onEdit && (
+            <button
+              onClick={(e) => handleAction(e, onEdit)}
+              className="p-2 bg-white/90 hover:bg-white rounded-lg shadow-sm transition-colors"
+              title="Edit course"
+            >
+              <Pencil className="w-4 h-4 text-gray-700" />
+            </button>
+          )}
         </div>
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
            <PlayCircle className="w-12 h-12 text-white drop-shadow-lg" />
@@ -61,11 +66,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onEdit,
           <span className="text-xs text-gray-400 font-normal">({course.studentsCount})</span>
         </div>
         
-        <h3 className="font-bold text-gray-900 dark:text-gray-100 line-clamp-2 min-h-[3rem] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        <h3 className="font-bold text-gray-900 line-clamp-2 min-h-[3rem] group-hover:text-indigo-600 transition-colors">
           {course.title}
         </h3>
-
-        <div className="flex items-center gap-2 mt-4 text-xs text-gray-500 dark:text-gray-400">
+        
+        <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
           <img 
             src="https://storage.googleapis.com/dala-prod-public-storage/generated-images/1fd75570-b0d4-4a6c-8569-b2f6b662e289/instructor-profile-1-4edf3cc3-1772004546272.webp" 
             alt={course.instructorName} 
@@ -74,8 +79,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onEdit,
           <span className="truncate">{course.instructorName}</span>
         </div>
 
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-50 dark:border-gray-700">
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-50">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Clock className="w-3.5 h-3.5" />
             <span>{course.duration}</span>
           </div>

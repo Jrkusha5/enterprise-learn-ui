@@ -1,5 +1,5 @@
-import React, { useState, lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Layout } from './components/ui/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { UserRole } from './types';
@@ -34,10 +34,19 @@ function PageFallback() {
 }
 
 export default function AppRoutes() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [role, setRole] = useState<UserRole>('student');
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const { user } = useAuth();
+
+  const editCourseId = new URLSearchParams(location.search).get('edit');
+
+  // When URL has ?edit=id, switch to courses tab
+  useEffect(() => {
+    if (editCourseId) setActiveTab('courses');
+  }, [editCourseId]);
 
   // Update role when user changes
   React.useEffect(() => {
@@ -60,7 +69,14 @@ export default function AppRoutes() {
       case 'dashboard':
         return <Dashboard role={role as any} onSelectCourse={(id) => setSelectedCourseId(id)} />;
       case 'courses':
-        return <Courses onSelectCourse={(id) => setSelectedCourseId(id)} />;
+        return (
+          <Courses
+            role={role as any}
+            onSelectCourse={(id) => setSelectedCourseId(id)}
+            editCourseId={editCourseId ?? undefined}
+            onClearEditId={() => navigate(location.pathname, { replace: true })}
+          />
+        );
       case 'students':
       case 'instructors':
         return <Management role={role as any} />;
