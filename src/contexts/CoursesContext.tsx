@@ -34,6 +34,9 @@ export const CoursesProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const addCourse = (input: Omit<Course, 'id'> & { id?: string }) => {
     const id = input.id ?? `custom-${Date.now()}`;
+    const lessons = input.chapters?.length
+      ? input.chapters.flatMap(c => c.lessons)
+      : (input.lessons ?? []);
     const newCourse: Course = {
       ...input,
       id,
@@ -45,7 +48,8 @@ export const CoursesProvider: React.FC<{ children: React.ReactNode }> = ({ child
       studentsCount: input.studentsCount ?? 0,
       duration: input.duration ?? '0h',
       description: input.description ?? '',
-      lessons: input.lessons ?? [],
+      chapters: input.chapters,
+      lessons,
     };
     setCustomCourses(prev => {
       const next = [...prev, newCourse];

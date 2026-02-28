@@ -64,6 +64,14 @@ export function getCourseProgressPercent(courseId: string, totalLessons: number)
   return p.progress ?? Math.round((Object.keys(p.completedLessons || {}).length / totalLessons) * 100);
 }
 
+export function getChapterProgress(courseId: string, lessonIds: string[]): { completed: number; total: number; percent: number } {
+  const p = getProgress()[courseId];
+  const total = lessonIds.length;
+  if (total === 0) return { completed: 0, total: 0, percent: 0 };
+  const completed = lessonIds.filter(id => p?.completedLessons?.[id]).length;
+  return { completed, total, percent: Math.round((completed / total) * 100) };
+}
+
 export function getMergedProgressForCourse(courseId: string, lessonIds: string[], defaultProgress?: number): { progress: number; completed: Record<string, boolean>; positions: Record<string, number> } {
   const p = getProgress()[courseId];
   const completed: Record<string, boolean> = {};

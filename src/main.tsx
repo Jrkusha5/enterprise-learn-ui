@@ -6,6 +6,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CoursesProvider } from "./contexts/CoursesContext";
+import { EnrollmentProvider } from "./contexts/EnrollmentContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 createRoot(document.getElementById("root")!).render(
@@ -15,7 +16,9 @@ createRoot(document.getElementById("root")!).render(
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <CoursesProvider>
-              <App />
+              <EnrollmentProvider>
+                <App />
+              </EnrollmentProvider>
             </CoursesProvider>
           </AuthProvider>
         </ThemeProvider>

@@ -42,11 +42,20 @@ export default function AppRoutes() {
   const { user } = useAuth();
 
   const editCourseId = new URLSearchParams(location.search).get('edit');
+  const openCourseId = new URLSearchParams(location.search).get('course');
 
   // When URL has ?edit=id, switch to courses tab
   useEffect(() => {
     if (editCourseId) setActiveTab('courses');
   }, [editCourseId]);
+
+  // When URL has ?course=id, open course player (for enrolled students)
+  useEffect(() => {
+    if (openCourseId && location.pathname === '/dashboard') {
+      setActiveTab('courses');
+      setSelectedCourseId(openCourseId);
+    }
+  }, [openCourseId, location.pathname]);
 
   // Update role when user changes
   React.useEffect(() => {

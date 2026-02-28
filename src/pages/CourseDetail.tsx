@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { LandingNavbar } from '../components/LandingNavbar';
 import { Button } from '../components/ui/button';
@@ -10,7 +10,6 @@ import {
   Clock, 
   Play, 
   CheckCircle2, 
-  ArrowLeft,
   Share2,
   Award,
   Download,
@@ -18,9 +17,13 @@ import {
   Calendar,
   Pencil
 } from 'lucide-react';
+import { CertificateTemplate } from '../components/CertificateTemplate';
 import { instructors } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 import { useCourses } from '../contexts/CoursesContext';
+import { useEnrollment } from '../contexts/EnrollmentContext';
+import { isLessonCompleted } from '../lib/progressStorage';
+import { downloadCertificateAsPdf } from '../lib/certificatePdf';
 import { toast } from 'sonner';
 
 export const CourseDetail: React.FC = () => {
@@ -28,9 +31,15 @@ export const CourseDetail: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const { courses, isCustomCourse } = useCourses();
+  const { isEnrolled, enroll } = useEnrollment();
   const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'reviews' | 'instructor'>('overview');
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
 
   const canEdit = (user?.role === 'admin' || user?.role === 'instructor') && id && isCustomCourse(id);
+  const certificateRecipientName = user?.name || 'John Doe';
+  const enrolled = id ? isEnrolled(id) : false;
 
   const course = courses.find(c => c.id === id);
   const instructor = course?.instructorId 
@@ -88,8 +97,15 @@ export const CourseDetail: React.FC = () => {
       navigate('/login');
       return;
     }
-    toast.success('Successfully enrolled in the course!');
-    navigate(`/dashboard`);
+    if (id) {
+      enroll(id);
+      toast.success('Successfully enrolled in the course!');
+      navigate(`/dashboard?course=${id}`);
+    }
+  };
+
+  const handleContinueLearning = () => {
+    if (id) navigate(`/dashboard?course=${id}`);
   };
 
   return (
@@ -239,7 +255,7 @@ export const CourseDetail: React.FC = () => {
                       {chapters.length} chapters • {totalLessons} lessons
                     </span>
                   </div>
-                  <Accordion type="multiple" className="space-y-2">
+                  <Accordion type="multiple" defaultValue={chapters.map(c => c.id)} className="space-y-2">
                     {chapters.map((chapter, index) => (
                       <AccordionItem 
                         key={chapter.id} 
@@ -252,30 +268,60 @@ export const CourseDetail: React.FC = () => {
                               <span className="text-2xl font-bold text-gray-500">{index + 1}</span>
                               <div className="text-left">
                                 <h3 className="font-semibold text-lg">{chapter.title}</h3>
-                                <p className="text-sm text-gray-400">{chapter.lessons.length} lessons</p>
+                                <p className="text-sm text-gray-400">
+                                  {chapter.lessons.length} lessons
+                                  {enrolled && id && (
+                                    <span className="ml-2 text-indigo-400">
+                                      • {chapter.lessons.filter(l => isLessonCompleted(id, l.id)).length}/{chapter.lessons.length} completed
+                                    </span>
+                                  )}
+                                </p>
                               </div>
                             </div>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="space-y-2 pl-12 pb-4">
-                            {chapter.lessons.map((lesson, lessonIndex) => (
-                              <div 
-                                key={lesson.id}
-                                className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <Play className="w-4 h-4 text-gray-500" />
-                                  <span className="text-gray-300">{lesson.title}</span>
-                                  {lessonIndex === 0 && (
-                                    <span className="text-xs text-indigo-400 bg-indigo-400/20 px-2 py-0.5 rounded">
-                                      Preview
+                            {chapter.lessons.map((lesson, lessonIndex) => {
+                              const completed = enrolled && id ? isLessonCompleted(id, lesson.id) : false;
+                              const lessonEl = (
+                                <div 
+                                  key={lesson.id}
+                                  onClick={enrolled ? () => navigate(`/dashboard?course=${id}`) : undefined}
+                                  className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                                    enrolled ? 'hover:bg-white/10 cursor-pointer' : 'hover:bg-white/5'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    {completed ? (
+                                      <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                                    ) : (
+                                      <Play className="w-4 h-4 text-gray-500 shrink-0" />
+                                    )}
+                                    <span className={completed ? 'text-gray-400 line-through' : 'text-gray-300'}>
+                                      {lesson.title}
                                     </span>
-                                  )}
+                                    {completed && (
+                                      <span className="px-2 py-0.5 text-[10px] font-medium bg-green-500/20 text-green-400 rounded-full">
+                                        Completed
+                                      </span>
+                                    )}
+                                    {lesson.freePreview && !completed && (
+                                      <span className="px-2 py-0.5 text-[10px] font-medium bg-green-500/20 text-green-400 rounded-full">
+                                        Free preview
+                                      </span>
+                                    )}
+                                    {lessonIndex === 0 && !completed && (
+                                      <span className="text-xs text-indigo-400 bg-indigo-400/20 px-2 py-0.5 rounded">
+                                        Preview
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-sm text-gray-500">{lesson.duration}</span>
                                 </div>
-                                <span className="text-sm text-gray-500">{lesson.duration}</span>
-                              </div>
-                            ))}
+                              );
+                              return lessonEl;
+                            })}
                           </div>
                         </AccordionContent>
                       </AccordionItem>
@@ -335,12 +381,22 @@ export const CourseDetail: React.FC = () => {
                 </div>
                 <div className="text-gray-400 text-sm mb-6">30-day access</div>
                 
-                <Button
-                  onClick={handleEnroll}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white mb-4 py-6 text-lg"
-                >
-                  Enroll Now
-                </Button>
+                {enrolled ? (
+                  <Button
+                    onClick={handleContinueLearning}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white mb-4 py-6 text-lg"
+                  >
+                    <Play className="w-5 h-5 mr-2" />
+                    Continue Learning
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleEnroll}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white mb-4 py-6 text-lg"
+                  >
+                    Enroll Now
+                  </Button>
+                )}
 
                 {canEdit && (
                   <Button
@@ -359,6 +415,15 @@ export const CourseDetail: React.FC = () => {
                 >
                   <Share2 className="w-4 h-4 mr-2" />
                   Share Course
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full border-gray-700 text-white hover:bg-white/10 mb-4"
+                  onClick={() => setShowCertificate(true)}
+                >
+                  <Award className="w-4 h-4 mr-2" />
+                  View Certificate
                 </Button>
 
                 <div className="space-y-3 text-sm">
@@ -384,6 +449,55 @@ export const CourseDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {showCertificate && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+          onClick={() => setShowCertificate(false)}
+        >
+          <div
+            className="bg-gray-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 max-h-[90vh] overflow-y-auto flex justify-center">
+              <CertificateTemplate
+                recipientName={certificateRecipientName}
+                courseTitle={course.title}
+                certificateRef={certificateRef}
+              />
+            </div>
+            <div className="p-4 border-t border-gray-800 flex justify-end gap-2">
+              <Button
+                className="bg-indigo-600 hover:bg-indigo-700"
+                disabled={isDownloading}
+                onClick={async () => {
+                  if (!certificateRef.current) return;
+                  setIsDownloading(true);
+                  try {
+                    const safeName = course.title.replace(/[^a-z0-9]/gi, '_').slice(0, 50);
+                    await downloadCertificateAsPdf(certificateRef.current, `Certificate_${safeName}.pdf`);
+                    toast.success('Certificate downloaded!');
+                  } catch (e) {
+                    toast.error('Failed to download certificate');
+                  } finally {
+                    setIsDownloading(false);
+                  }
+                }}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {isDownloading ? 'Downloading...' : 'Download PDF'}
+              </Button>
+              <Button
+                variant="outline"
+                className="border-gray-700 text-white hover:bg-white/10"
+                onClick={() => setShowCertificate(false)}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

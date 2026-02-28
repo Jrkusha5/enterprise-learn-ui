@@ -54,6 +54,12 @@ export interface Review {
   date: string;
 }
 
+export interface LessonResource {
+  name: string;
+  url: string;
+  type?: 'pdf' | 'doc' | 'docx';
+}
+
 export interface Lesson {
   id: string;
   title: string;
@@ -61,6 +67,10 @@ export interface Lesson {
   completed: boolean;
   videoUrl?: string;
   content?: string;
+  /** Resources (PDF, Word) attached to this lecture */
+  resources?: LessonResource[];
+  /** If true, this lecture preview is free on the public landing page */
+  freePreview?: boolean;
 }
 
 export interface Message {

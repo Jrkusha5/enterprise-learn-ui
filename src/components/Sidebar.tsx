@@ -77,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activeTab, setActiveTab, collap
               <div className="bg-indigo-600 text-white p-1.5 rounded-lg shadow-lg">
                 <GraduationCap size={24} />
               </div>
-              <span className="tracking-tight">EduFlow</span>
+              <span className="tracking-tight">ZappaLMS</span>
             </div>
           )}
           {collapsed && (

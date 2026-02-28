@@ -34,35 +34,21 @@ export const courses: Course[] = [
     price: 89.99,
     description: 'Master the latest features of React 19, including Server Components, Actions, and enhanced hooks.',
     lessons: [
-      { 
-        id: 'l-1', 
-        title: 'Introduction to React 19', 
-        duration: '10:00', 
-        completed: true,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-      },
-      { 
-        id: 'l-2', 
-        title: 'New Hook: useActionState', 
-        duration: '15:30', 
-        completed: true,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-      },
-      { 
-        id: 'l-3', 
-        title: 'Server Components Explained', 
-        duration: '20:00', 
-        completed: false,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-      },
-      { 
-        id: 'l-4', 
-        title: 'Optimizing Performance', 
-        duration: '12:45', 
-        completed: false,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
-      },
-    ]
+      { id: 'l-1', title: 'Introduction to React 19', duration: '10:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+      { id: 'l-2', title: 'New Hook: useActionState', duration: '15:30', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+      { id: 'l-3', title: 'Server Components Explained', duration: '20:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+      { id: 'l-4', title: 'Optimizing Performance', duration: '12:45', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
+    ],
+    chapters: [
+      { id: 'ch-1', title: 'Getting Started', lessons: [
+        { id: 'l-1', title: 'Introduction to React 19', duration: '10:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+        { id: 'l-2', title: 'New Hook: useActionState', duration: '15:30', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+      ]},
+      { id: 'ch-2', title: 'Advanced Concepts', lessons: [
+        { id: 'l-3', title: 'Server Components Explained', duration: '20:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+        { id: 'l-4', title: 'Optimizing Performance', duration: '12:45', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
+      ]},
+    ],
   },
   {
     id: 'c-2',
@@ -78,21 +64,15 @@ export const courses: Course[] = [
     price: 129.99,
     description: 'A comprehensive guide to Python for Data Science, statistics, and machine learning algorithms.',
     lessons: [
-      { 
-        id: 'l-5', 
-        title: 'Python Basics for Data Science', 
-        duration: '45:00', 
-        completed: true,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
-      },
-      { 
-        id: 'l-6', 
-        title: 'NumPy and Pandas Deep Dive', 
-        duration: '60:00', 
-        completed: false,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
-      },
-    ]
+      { id: 'l-5', title: 'Python Basics for Data Science', duration: '45:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
+      { id: 'l-6', title: 'NumPy and Pandas Deep Dive', duration: '60:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
+    ],
+    chapters: [
+      { id: 'ch-3', title: 'Python for Data Science', lessons: [
+        { id: 'l-5', title: 'Python Basics for Data Science', duration: '45:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
+        { id: 'l-6', title: 'NumPy and Pandas Deep Dive', duration: '60:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
+      ]},
+    ],
   },
   {
     id: 'c-3',
@@ -108,21 +88,15 @@ export const courses: Course[] = [
     price: 79.99,
     description: 'Learn professional UI/UX design from scratch using Figma, Framer, and modern design principles.',
     lessons: [
-      { 
-        id: 'l-7', 
-        title: 'Design Thinking Principles', 
-        duration: '15:00', 
-        completed: false,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
-      },
-      { 
-        id: 'l-8', 
-        title: 'Mastering Figma Components', 
-        duration: '35:00', 
-        completed: false,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
-      },
-    ]
+      { id: 'l-7', title: 'Design Thinking Principles', duration: '15:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' },
+      { id: 'l-8', title: 'Mastering Figma Components', duration: '35:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
+    ],
+    chapters: [
+      { id: 'ch-4', title: 'Design Fundamentals', lessons: [
+        { id: 'l-7', title: 'Design Thinking Principles', duration: '15:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' },
+        { id: 'l-8', title: 'Mastering Figma Components', duration: '35:00', completed: false, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
+      ]},
+    ],
   },
   {
     id: 'c-4',
@@ -138,21 +112,15 @@ export const courses: Course[] = [
     price: 149.99,
     description: 'Learn how to lead teams, manage budgets, and execute business strategies effectively.',
     lessons: [
-      { 
-        id: 'l-9', 
-        title: 'Leadership Styles', 
-        duration: '20:00', 
-        completed: true,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackAds.mp4'
-      },
-      { 
-        id: 'l-10', 
-        title: 'Financial Planning', 
-        duration: '40:00', 
-        completed: true,
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
-      },
-    ]
+      { id: 'l-9', title: 'Leadership Styles', duration: '20:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackAds.mp4' },
+      { id: 'l-10', title: 'Financial Planning', duration: '40:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+    ],
+    chapters: [
+      { id: 'ch-5', title: 'Leadership & Finance', lessons: [
+        { id: 'l-9', title: 'Leadership Styles', duration: '20:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackAds.mp4' },
+        { id: 'l-10', title: 'Financial Planning', duration: '40:00', completed: true, videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+      ]},
+    ],
   }
 ];
 

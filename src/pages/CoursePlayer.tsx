@@ -22,6 +22,9 @@ import {
   StickyNote
 } from 'lucide-react';
 import { useCourses } from '../contexts/CoursesContext';
+import { useAuth } from '../contexts/AuthContext';
+import { CertificateTemplate } from '../components/CertificateTemplate';
+import { downloadCertificateAsPdf } from '../lib/certificatePdf';
 import { cn } from '../utils/cn';
 import { toast } from 'sonner';
 import {
@@ -44,6 +47,7 @@ function formatTime(seconds: number): string {
 
 export const CoursePlayer = ({ courseId, onBack }: { courseId: string; onBack: () => void }) => {
   const { courses } = useCourses();
+  const { user } = useAuth();
   const course = courses.find(c => c.id === courseId) || courses[0];
   const lessonIds = course.lessons.map(l => l.id);
   const stored = getMergedProgressForCourse(courseId, lessonIds, course.progress);
@@ -66,9 +70,11 @@ export const CoursePlayer = ({ courseId, onBack }: { courseId: string; onBack: (
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const LESSON_QUIZ = { question: 'What is the primary way to manage local state in React function components?', options: ['useState', 'useEffect', 'useContext', 'useReducer'], correct: 'useState' };
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const certificateRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timeUpdateRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -592,16 +598,15 @@ export const CoursePlayer = ({ courseId, onBack }: { courseId: string; onBack: (
 
             <div className="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700">
               <button
-                onClick={() => isCourseComplete && setShowCertificate(true)}
-                disabled={!isCourseComplete}
+                onClick={() => setShowCertificate(true)}
                 className={cn(
                   "w-full py-3 font-bold rounded-xl text-sm transition-colors shadow-sm",
                   isCourseComplete
                     ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                    : "bg-indigo-600/80 text-white hover:bg-indigo-700 border border-indigo-500/50"
                 )}
               >
-                View Certificate
+                View Certificate {!isCourseComplete && "(Preview)"}
               </button>
             </div>
           </div>
@@ -624,21 +629,42 @@ export const CoursePlayer = ({ courseId, onBack }: { courseId: string; onBack: (
       </div>
 
       {showCertificate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setShowCertificate(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-md w-full p-8 text-center border border-gray-200 dark:border-gray-700" onClick={e => e.stopPropagation()}>
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-              <span className="text-4xl">🏆</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={() => setShowCertificate(false)}>
+          <div className="bg-gray-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-6 max-h-[90vh] overflow-y-auto flex justify-center">
+              <CertificateTemplate
+                recipientName={user?.name || 'John Doe'}
+                courseTitle={course.title}
+                certificateRef={certificateRef}
+              />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Certificate of Completion</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">This certifies that you have successfully completed</p>
-            <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-8">{course.title}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-500 mb-8">EduFlow Learning Platform</p>
-            <button
-              onClick={() => setShowCertificate(false)}
-              className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700"
-            >
+            <div className="p-4 border-t border-gray-800 flex justify-end gap-2">
+              <button
+                onClick={async () => {
+                  if (!certificateRef.current) return;
+                  setIsDownloading(true);
+                  try {
+                    const safeName = course.title.replace(/[^a-z0-9]/gi, '_').slice(0, 50);
+                    await downloadCertificateAsPdf(certificateRef.current, `Certificate_${safeName}.pdf`);
+                    toast.success('Certificate downloaded!');
+                  } catch (e) {
+                    toast.error('Failed to download certificate');
+                  } finally {
+                    setIsDownloading(false);
+                  }
+                }}
+                disabled={isDownloading}
+                className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+              >
+                {isDownloading ? 'Downloading...' : 'Download PDF'}
+              </button>
+              <button
+                onClick={() => setShowCertificate(false)}
+                className="px-6 py-2.5 border border-gray-600 text-white rounded-xl font-medium hover:bg-white/10"
+              >
                 Close
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       )}
