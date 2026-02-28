@@ -1,23 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/ui/Layout';
-import { Dashboard } from './pages/Dashboard';
-import { Courses } from './pages/Courses';
-import { CoursePlayer } from './pages/CoursePlayer';
-import { Management } from './pages/Management';
-import { Analytics } from './pages/Analytics';
-import { Messages } from './pages/Messages';
-import { Calendar } from './pages/Calendar';
-import { Settings } from './pages/Settings';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { Landing } from './pages/Landing';
-import { CoursesListing } from './pages/CoursesListing';
-import { CourseDetail } from './pages/CourseDetail';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { UserRole } from './types';
 import { Toaster, toast } from 'sonner';
 import { useAuth } from './contexts/AuthContext';
+import { Skeleton } from './components/ui/skeleton';
+
+const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const Courses = lazy(() => import('./pages/Courses').then(m => ({ default: m.Courses })));
+const CoursePlayer = lazy(() => import('./pages/CoursePlayer').then(m => ({ default: m.CoursePlayer })));
+const Management = lazy(() => import('./pages/Management').then(m => ({ default: m.Management })));
+const Analytics = lazy(() => import('./pages/Analytics').then(m => ({ default: m.Analytics })));
+const Messages = lazy(() => import('./pages/Messages').then(m => ({ default: m.Messages })));
+const Calendar = lazy(() => import('./pages/Calendar').then(m => ({ default: m.Calendar })));
+const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })));
+const Landing = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
+const CoursesListing = lazy(() => import('./pages/CoursesListing').then(m => ({ default: m.CoursesListing })));
+const CourseDetail = lazy(() => import('./pages/CourseDetail').then(m => ({ default: m.CourseDetail })));
+
+function PageFallback() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-10 w-64" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28 rounded-2xl" />)}
+      </div>
+      <Skeleton className="h-80 rounded-2xl" />
+    </div>
+  );
+}
 
 export default function AppRoutes() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -44,7 +58,7 @@ export default function AppRoutes() {
 
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard role={role as any} />;
+        return <Dashboard role={role as any} onSelectCourse={(id) => setSelectedCourseId(id)} />;
       case 'courses':
         return <Courses onSelectCourse={(id) => setSelectedCourseId(id)} />;
       case 'students':
@@ -91,29 +105,31 @@ export default function AppRoutes() {
       <Toaster position="top-right" richColors />
       <Routes>
         {/* Landing Page - Default Route */}
-        <Route path="/" element={<Landing />} />
-        
+        <Route path="/" element={<Suspense fallback={<PageFallback />}><Landing /></Suspense>} />
+
         {/* Public Routes */}
-        <Route path="/courses" element={<CoursesListing />} />
-        <Route path="/courses/:id" element={<CourseDetail />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/courses" element={<Suspense fallback={<PageFallback />}><CoursesListing /></Suspense>} />
+        <Route path="/courses/:id" element={<Suspense fallback={<PageFallback />}><CourseDetail /></Suspense>} />
+        <Route path="/login" element={<Suspense fallback={<PageFallback />}><Login /></Suspense>} />
+        <Route path="/register" element={<Suspense fallback={<PageFallback />}><Register /></Suspense>} />
         
         {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Layout 
-                activeTab={activeTab} 
+              <Layout
+                activeTab={activeTab}
                 setActiveTab={(tab) => {
                   setActiveTab(tab);
                   setSelectedCourseId(null);
-                }} 
+                }}
                 role={role as any}
                 setRole={handleRoleChange as any}
               >
-                {renderContent()}
+                <Suspense fallback={<PageFallback />}>
+                  {renderContent()}
+                </Suspense>
               </Layout>
             </ProtectedRoute>
           }

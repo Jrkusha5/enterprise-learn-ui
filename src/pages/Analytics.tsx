@@ -39,7 +39,25 @@ export const Analytics = () => {
           <h1 className="text-2xl font-bold text-gray-900">Advanced Analytics</h1>
           <p className="text-gray-500">In-depth performance tracking and business intelligence.</p>
         </div>
-        <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all">
+        <button
+          onClick={() => {
+            const csv = [
+              'Month,Value',
+              ...enrollmentStats.map(d => `${d.name},${d.value}`),
+              '',
+              'Status,Count',
+              ...pieData.map(d => `${d.name},${d.value}`),
+            ].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'analytics-export.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+          className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+        >
           <Download className="w-4 h-4" />
           Export Data
         </button>

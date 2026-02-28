@@ -10,16 +10,18 @@ import {
   Settings, 
   LogOut, 
   Menu, 
-  X, 
   Bell, 
   Search,
   ChevronDown,
   User as UserIcon,
   ShieldCheck,
-  GraduationCap
+  GraduationCap,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useTheme } from 'next-themes';
 import { useAuth } from '../../contexts/AuthContext';
 import { GoogleTranslateSelector } from '../GoogleTranslateSelector';
 
@@ -40,6 +42,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -59,11 +62,11 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
   ].filter(item => item.roles.includes(role));
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-900 flex">
       {/* Sidebar */}
-      <aside 
+      <aside
         className={cn(
-          "bg-indigo-900 text-white transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50",
+          "bg-indigo-900 dark:bg-indigo-950 text-white transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50",
           isSidebarOpen ? "w-64" : "w-20"
         )}
       >
@@ -121,7 +124,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
         isSidebarOpen ? "ml-64" : "ml-20"
       )}>
         {/* Navbar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-40">
+        <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-8 sticky top-0 z-40">
           <div className="flex items-center gap-4 flex-1">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -140,7 +143,15 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
           </div>
 
           <div className="flex items-center gap-4">
-            <GoogleTranslateSelector className="text-gray-600" variant="light" />
+            <button
+              type="button"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <GoogleTranslateSelector className="text-gray-600 dark:text-gray-300" variant="light" />
             <div className="relative">
                <button 
                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}

@@ -12,21 +12,42 @@ import {
   Clock,
   ArrowRight
 } from 'lucide-react';
-import { courses } from '../data/mockData';
+import { useCourses } from '../contexts/CoursesContext';
 
 export const CoursesListing: React.FC = () => {
   const navigate = useNavigate();
+  const { courses } = useCourses();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'rating' | 'duration'>('newest');
 
   const categories = ['All', 'Development', 'Design', 'Data Science', 'Business'];
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredCourses = React.useMemo(() => {
+    let list = courses.filter(course => {
+      const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           course.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+    switch (sortBy) {
+      case 'popular':
+        list = [...list].sort((a, b) => (b.studentsCount ?? 0) - (a.studentsCount ?? 0));
+        break;
+      case 'rating':
+        list = [...list].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        break;
+      case 'duration':
+        list = [...list].sort((a, b) => {
+          const parse = (s: string) => { const m = s.match(/(\d+)h/); const min = s.match(/(\d+)m/); return (m ? parseInt(m[1], 10) * 60 : 0) + (min ? parseInt(min[1], 10) : 0); };
+          return parse(a.duration) - parse(b.duration);
+        });
+        break;
+      default:
+        break;
+    }
+    return list;
+  }, [searchQuery, selectedCategory, sortBy]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-900 text-white">
@@ -76,10 +97,20 @@ export const CoursesListing: React.FC = () => {
       {/* Courses Grid */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <h2 className="text-2xl font-bold">
               {filteredCourses.length} {filteredCourses.length === 1 ? 'Course' : 'Courses'} Found
             </h2>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="newest">Sort: Newest</option>
+              <option value="popular">Sort: Most Popular</option>
+              <option value="rating">Sort: Highest Rated</option>
+              <option value="duration">Sort: Shortest Duration</option>
+            </select>
           </div>
 
           {filteredCourses.length === 0 ? (
