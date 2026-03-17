@@ -33,6 +33,31 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# python / fastapi backend
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.Python
+
+# virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# backend venv (common in this repo)
+/backend/.venv/
+
+# tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# alembic / sqlite (if used locally)
+*.db
+
 # vercel
 .vercel
 
